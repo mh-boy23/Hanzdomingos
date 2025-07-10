@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hanz Domingos - Dynamic Data Portfolio</title>
+    <title>Hanz Domingos - Your Chill Data Journey</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,6 +16,7 @@
             color: #334155; /* Dark slate for primary text */
             line-height: 1.6;
             scroll-behavior: smooth; /* Smooth scrolling for navigation */
+            overflow-x: hidden; /* Prevent horizontal scroll */
         }
         .navbar {
             background: linear-gradient(90deg, #1A237E 0%, #0D47A1 100%); /* Deep Indigo to Darker Blue gradient */
@@ -49,13 +50,51 @@
             margin: 2rem auto;
             padding: 0 1.5rem; /* Padding for the edges */
         }
-        .section-card {
+        .section-card, .hero-section {
             background-color: #ffffff;
             border-radius: 1.5rem;
             box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.15), 0 0 15px -8px rgba(0, 0, 0, 0.08);
             padding: 2.5rem 3rem;
             margin-bottom: 2rem;
+            /* Initial state for section animation */
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            display: none; /* Hidden by default */
         }
+        .hero-section {
+            background: linear-gradient(135deg, #0D47A1 0%, #1A237E 100%);
+            color: white;
+        }
+
+        /* Active state for visible section content */
+        .section-card.active, .hero-section.active {
+            opacity: 1;
+            transform: translateY(0);
+            display: block; /* Show active content */
+        }
+
+        /* Inactive state for section animating out */
+        .section-card.inactive, .hero-section.inactive {
+            opacity: 0;
+            transform: translateY(-20px); /* Animate upwards on exit */
+            transition: opacity 0.4s ease-in, transform 0.4s ease-in; /* Faster exit */
+            display: block; /* Keep block during exit animation */
+        }
+
+        /* --- Internal element animations --- */
+        /* Apply initial hidden state to all animatable elements */
+        .animatable-element {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+        /* Active state for animatable elements */
+        .animatable-element.animate-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         .section-title {
             font-weight: 800;
             font-size: 2.25rem; /* Larger section titles */
@@ -79,15 +118,6 @@
             height: 4px;
             background-color: #00BCD4; /* Cyan underline */
             border-radius: 2px;
-        }
-        .hero-section {
-            background: linear-gradient(135deg, #0D47A1 0%, #1A237E 100%); /* Darker Blue to Deep Indigo gradient */
-            color: white;
-            padding: 6rem 2rem;
-            border-radius: 1.5rem;
-            text-align: center;
-            margin-bottom: 2rem;
-            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.3);
         }
         .hero-section h1 {
             font-size: 4.5rem; /* Large hero name */
@@ -188,24 +218,6 @@
         .footer a:hover {
             text-decoration: underline;
         }
-        .tab-content {
-            display: none; /* Hidden by default */
-            animation: fadeInContent 0.5s ease-out;
-        }
-        .tab-content.active {
-            display: block; /* Show active content */
-        }
-        @keyframes fadeInContent {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 500px; /* Max width for chart */
-            height: 300px; /* Fixed height for chart */
-            margin: 0 auto;
-        }
         @media (max-width: 767px) {
             .navbar a {
                 padding: 0.5rem 0.75rem;
@@ -224,6 +236,29 @@
             .section-card {
                 padding: 1.5rem 1.5rem;
             }
+        }
+        /* Animated Counters */
+        .animated-counter {
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 1;
+            color: #2196F3;
+            display: inline-block;
+            width: auto; /* Allow width to adjust */
+            min-width: 50px; /* Ensure some minimum width */
+        }
+        .stat-box {
+            background-color: #F0F8FF; /* Very light blue for stat boxes */
+            border: 1px solid #B3E5FC; /* Light blue border */
+            padding: 1.5rem;
+            border-radius: 1rem;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        .stat-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
         }
     </style>
 </head>
@@ -246,96 +281,106 @@
     <div class="container">
 
         <!-- Home Section (Hero) -->
-        <section id="home-content" class="tab-content active hero-section">
-            <h1 class="text-white">Hanz Domingos</h1>
-            <p class="text-white">M&E | Data Management | Data Analyst</p>
-            <p class="text-white text-base md:text-lg max-w-2xl mx-auto mb-8">
-                Technologically savvy and focused with a strong background in advanced data management and troubleshooting. Effective in developing and optimizing data systems to meet customer needs.
+        <section id="home-content" class="tab-content hero-section">
+            <h1 class="text-white animatable-element">Hanz Domingos</h1>
+            <p class="text-white animatable-element" style="transition-delay: 0.1s;">M&E | Data Management | Data Analyst</p>
+            <p class="text-white text-base md:text-lg max-w-2xl mx-auto mb-8 animatable-element" style="transition-delay: 0.2s;">
+                Hey there! 👋 I'm Hanz, a tech-savvy pro passionate about making data work wonders. Ready to dive into my journey?
             </p>
-            <a href="#contact" class="hero-contact-link tab-link" data-tab="contact-content">Get in Touch</a>
+            <a href="#contact" class="hero-contact-link tab-link animatable-element" data-tab="contact-content" style="transition-delay: 0.3s;">Let's Connect! ✨</a>
         </section>
 
         <!-- About Me Section -->
         <section id="about-content" class="tab-content section-card">
-            <h2 class="section-title">👤 About Me</h2>
-            <p class="text-slate-700 leading-relaxed text-center">
-                As a dedicated Monitoring & Evaluation, Data Management, and Data Analyst professional, I bring a robust background in leveraging data to drive impactful health initiatives. My expertise spans designing comprehensive M&E plans, optimizing data collection systems, and transforming complex datasets into actionable insights. I am passionate about utilizing technology and analytical rigor to enhance program effectiveness and contribute to evidence-based decision-making in public health.
+            <h2 class="section-title animatable-element">👤 So, who's Hanz, anyway? 🤔</h2>
+            <p class="text-slate-700 leading-relaxed text-center mb-8 animatable-element" style="transition-delay: 0.1s;">
+                Simply put, I'm a Monitoring & Evaluation, Data Management, and Data Analyst pro who loves turning complex data into clear, actionable insights. Think of me as your data whisperer! I'm all about using tech and smart analysis to boost program effectiveness, especially in public health.
             </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                <div class="stat-box animatable-element" data-delay="0.2">
+                    <div class="animated-counter" data-target="8">0</div><span class="text-2xl font-bold text-blue-700">+</span>
+                    <p class="stat-label">Years Experience</p>
+                    <p class="text-xs text-slate-500 mt-1">in M&E & Data Analytics</p>
+                </div>
+                <div class="stat-box animatable-element" data-delay="0.3">
+                    <div class="animated-counter" data-target="40">0</div><span class="text-2xl font-bold text-blue-700">+</span>
+                    <p class="stat-label">Health Units Trained</p>
+                    <p class="text-xs text-slate-500 mt-1">on critical data reporting</p>
+                </div>
+                <div class="stat-box animatable-element" data-delay="0.4">
+                    <div class="animated-counter" data-target="19000">0</div><span class="text-2xl font-bold text-blue-700">+</span>
+                    <p class="stat-label">Data Rows Analyzed</p>
+                    <p class="text-xs text-slate-500 mt-1">for public health programs</p>
+                </div>
+            </div>
         </section>
 
         <!-- Experience Section -->
         <section id="experience-content" class="tab-content section-card">
-            <h2 class="section-title">💼 Professional Experience</h2>
+            <h2 class="section-title animatable-element">💼 What's Hanz been up to? 🚀</h2>
+            <p class="text-slate-700 leading-relaxed text-center mb-8 animatable-element" style="transition-delay: 0.1s;">
+                My journey has been all about making a real impact with data in the health sector. Here’s a quick peek at where I’ve made a difference:
+            </p>
 
-            <div class="experience-item">
+            <div class="experience-item animatable-element" data-delay="0.2">
                 <h3 class="text-xl font-semibold text-slate-800">Monitoring and Evaluation Consultant</h3>
                 <p class="sub-heading">Clinton Health Access Initiative, Maputo | 2021-09 – Current</p>
                 <ul class="list-none mt-2 text-slate-700">
-                    <li class="flex items-start"><span class="list-item-bullet">•</span> Supported design of ATIP HIV and Viral Load program concept note, and designed associated monitoring and evaluation plan and data collection tools.</li>
-                    <li class="flex items-start"><span class="list-item-bullet">•</span> Trained health technicians on data reporting for breastfeeding mothers, pregnant women, and children across 3 provinces, 20+ districts, and 40 health units.</li>
-                    <li class="flex items-start"><span class="list-item-bullet">•</span> Conducted monitoring visits to verify program implementation.</li>
-                    <li class="flex items-start"><span class="list-item-bullet">•</span> Supported Malaria program in implementing the Integrated Malaria Information System, including developing supervision forms in Survey CTO.</li>
-                    <li class="flex items-start"><span class="list-item-bullet">•</span> Assisted Malaria program with Health Facility Survey by installing Survey CTO on tablets, updating forms on the server, monitoring form submissions, and developing a dashboard for stakeholders.</li>
-                    <li class="flex items-start"><span class="list-item-bullet">•</span> Supported National Institute of Health in implementing a research program for COVID-19 rapid response by developing data collection tools in Open Data Kit (ODK) software and training data collectors.</li>
-                    <li class="flex items-start"><span class="list-item-bullet">•</span> Coordinated meetings to discuss collected data and present results to stakeholders; analyzed data and produced reports.</li>
+                    <li class="flex items-start"><span class="list-item-bullet">•</span> Helped design HIV/VL program M&E plans & data tools.</li>
+                    <li class="flex items-start"><span class="list-item-bullet">•</span> Trained health pros on data reporting across 3 provinces.</li>
+                    <li class="flex items-start"><span class="list-item-bullet">•</span> Supported Malaria program tech implementation.</li>
+                    <li class="flex items-start"><span class="list-item-bullet">•</span> Analyzed data & created cool reports for folks who needed them.</li>
                 </ul>
             </div>
 
-            <div class="experience-item">
+            <div class="experience-item animatable-element" data-delay="0.3">
                 <h3 class="text-xl font-semibold text-slate-800">Monitoring and Evaluation Officer</h3>
                 <p class="sub-heading">Clinton Health Access Initiative, Maputo | 2018-12 – Current</p>
                 <ul class="list-none mt-2 text-slate-700">
-                    <li class="flex items-start"><span class="list-item-bullet">•</span> Developed and installed PostgreSQL database on over 20 Linux-based computers; trained health facility technicians and improved data collection tools.</li>
-                    <li class="list-item"><span class="list-item-bullet">•</span> Periodically analyzed data reported by the provincial directorate; supported project progress reporting, mid-term reviews, and final evaluations.</li>
-                    <li class="list-item"><span class="list-item-bullet">•</span> Assisted in developing and updating project Work Plans, log frame matrices, and Performance Monitoring Plans; reviewed data quality and provided M&E technical support.</li>
-                    <li class="list-item"><span class="list-item-bullet">•</span> Organized and conducted training sessions on M&E and database usage; developed plans for capacity-building and computer-based support.</li>
-                    <li class="list-item"><span class="list-item-bullet">•</span> Ensured data quality with partners; provided technical support and organized refresher training sessions; identified areas needing technical support.</li>
-                    <li class="list-item"><span class="list-item-bullet">•</span> Produced M&E findings reports and presentations; developed case studies; provided management information and improvement advice based on M&E findings.</li>
+                    <li class="flex items-start"><span class="list-item-bullet">•</span> Set up databases (PostgreSQL!) & trained health facility teams.</li>
+                    <li class="list-item"><span class="list-item-bullet">•</span> Kept an eye on project progress & helped with evaluations.</li>
+                    <li class="list-item"><span class="list-item-bullet">•</span> Made sure data was top-notch & provided M&E tech support.</li>
+                    <li class="list-item"><span class="list-item-bullet">•</span> Wrote reports & gave advice based on what the data told us.</li>
                 </ul>
             </div>
 
-            <div class="experience-item">
+            <div class="experience-item animatable-element" data-delay="0.4">
                 <h3 class="text-xl font-semibold text-slate-800">Data Management Officer (Malaria Program)</h3>
                 <p class="sub-heading">Clinton Health Access Initiative, Maputo | 2018-01 – 2018-12</p>
                 <ul class="list-none mt-2 text-slate-700">
-                    <li class="list-item"><span class="list-item-bullet">•</span> Designed data collection tool for surveillance of malaria cases of "Local of residence collection".</li>
-                    <li class="list-item"><span class="list-item-bullet">•</span> Lead and coordinated team of over 10 data collectors, collecting data in 31 Health Facilities around Maputo City.</li>
-                    <li class="list-item"><span class="list-item-bullet">•</span> Supervised field work.</li>
-                    <li class="list-item"><span class="list-item-bullet">•</span> Analyzed over <span class="highlight-text">19,000 rows of data</span>.</li>
-                    <li class="list-item"><span class="list-item-bullet">•</span> Designed dashboard for monitoring data collection.</li>
-                    <li class="list-item"><span class="list-item-bullet">•</span> Lead data consolidation meetings.</li>
-                    <li class="list-item"><span class="list-item-bullet">•</span> Finalized analysis and reported to stakeholders.</li>
+                    <li class="list-item"><span class="list-item-bullet">•</span> Created data collection tools for malaria surveillance.</li>
+                    <li class="list-item"><span class="list-item-bullet">•</span> Led a team of 10+ data collectors in Maputo City.</li>
+                    <li class="list-item"><span class="list-item-bullet">•</span> Dug into <span class="highlight-text">19,000+ rows of data</span> & built dashboards.</li>
+                    <li class="list-item"><span class="list-item-bullet">•</span> Consolidated data & shared findings with everyone involved.</li>
                 </ul>
             </div>
 
-            <div class="experience-item">
+            <div class="experience-item animatable-element" data-delay="0.5">
                 <h3 class="text-xl font-semibold text-slate-800">IT Support Consultant</h3>
                 <p class="sub-heading">Caresoft Ltd, Maputo | 2017-02 – 2018-01</p>
                 <ul class="list-none mt-2 text-slate-700">
-                    <li class="list-item"><span class="list-item-bullet">•</span> Installed and configured computer hardware, software, systems, networks, printers and scanners.</li>
-                    <li class="list-item"><span class="list-item-bullet">•</span> Monitored and maintained computer systems and networks.</li>
-                    <li class="list-item"><span class="list-item-bullet">•</span> Responded in timely manner to service issues and requests.</li>
-                    <li class="list-item"><span class="list-item-bullet">•</span> Provided technical support across company (in person or over phone).</li>
-                    <li class="list-item"><span class="list-item-bullet">•</span> Set up accounts for new users.</li>
-                    <li class="list-item"><span class="list-item-bullet">•</span> Repaired and replaced equipment as necessary.</li>
-                    <li class="list-item"><span class="list-item-bullet">•</span> Tested new technology.</li>
-                    <li class="list-item"><span class="list-item-bullet">•</span> Possibly trained more junior staff members.</li>
+                    <li class="list-item"><span class="list-item-bullet">•</span> Set up computers, software, and networks (the whole IT dance!).</li>
+                    <li class="list-item"><span class="list-item-bullet">•</span> Kept systems humming & fixed any tech hiccups.</li>
+                    <li class="list-item"><span class="list-item-bullet">•</span> Helped new users get started & even trained some junior folks.</li>
                 </ul>
             </div>
         </section>
 
         <!-- Skills Section -->
         <section id="skills-content" class="tab-content section-card">
-            <h2 class="section-title">🛠️ Skills & Certifications</h2>
+            <h2 class="section-title animatable-element">🛠️ What's in Hanz's Toolkit? 🧰</h2>
+            <p class="text-slate-700 leading-relaxed text-center mb-8 animatable-element" style="transition-delay: 0.1s;">
+                Here's a peek at the tools and skills I bring to the table. From crunching numbers to building automated flows, I've got it covered!
+            </p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
+                <div class="animatable-element" data-delay="0.2">
                     <h3 class="skill-category">SOFTWARE PROFICIENCY</h3>
                     <div class="chart-container">
                         <canvas id="softwareProficiencyChart"></canvas>
                     </div>
-                    <p class="text-center text-sm text-slate-500 mt-4">Visual representation of key software skills.</p>
+                    <p class="text-center text-sm text-slate-500 mt-4">My go-to software for data magic!</p>
                 </div>
-                <div>
+                <div class="animatable-element" data-delay="0.3">
                     <h3 class="skill-category">LANGUAGES</h3>
                     <ul class="list-none mt-2">
                         <li class="skill-item"><span>English</span> <span class="skill-level">Excellent</span></li>
@@ -355,12 +400,15 @@
 
         <!-- Education Section -->
         <section id="education-content" class="tab-content section-card">
-            <h2 class="section-title">🎓 Education</h2>
-            <div class="mb-4">
+            <h2 class="section-title animatable-element">🎓 Where did Hanz learn his stuff? 📚</h2>
+            <p class="text-slate-700 leading-relaxed text-center mb-8 animatable-element" style="transition-delay: 0.1s;">
+                Always learning, always growing! Here's a quick look at my academic journey:
+            </p>
+            <div class="mb-4 animatable-element" data-delay="0.2">
                 <h3 class="text-xl font-semibold text-slate-800">Juridical Science</h3>
                 <p class="sub-heading">Polytechnic University- Maputo | 2022-02 – Current</p>
             </div>
-            <div>
+            <div class="animatable-element" data-delay="0.3">
                 <h3 class="text-xl font-semibold text-slate-800">Accounting And Management</h3>
                 <p class="sub-heading">Higher Institute of Education And Management - Maputo | 2014-02 – 2019-12</p>
             </div>
@@ -368,30 +416,33 @@
 
         <!-- Publications and Accomplishments Section -->
         <section id="publications-content" class="tab-content section-card">
-            <h2 class="section-title">📝 Publications & Accomplishments</h2>
-            <h3 class="skill-category">PUBLICATIONS AND STUDIES</h3>
+            <h2 class="section-title animatable-element">📝 Any cool projects or studies? ✨</h2>
+            <p class="text-slate-700 leading-relaxed text-center mb-8 animatable-element" style="transition-delay: 0.1s;">
+                Yep, I've been part of some exciting projects and studies! Here are a few highlights:
+            </p>
+            <h3 class="skill-category animatable-element" data-delay="0.2">PUBLICATIONS AND STUDIES</h3>
             <ul class="list-none mt-2 text-slate-700">
-                <li class="list-item"><span class="list-item-bullet">•</span> SARS-CoV-2 exposure in Mozambican prison population 2021.</li>
-                <li class="list-item"><span class="list-item-bullet">•</span> Sars-Cov-2 Seroprevalence Among Blood Donors After The Second Covid-19 Wave In Mozambique 2021.</li>
-                <li class="list-item"><span class="list-item-bullet">•</span> Identification of the most frequent medical complications in children under five years of age with acute malnutrition admitted to 6 hospitals in the province of Tete.</li>
+                <li class="list-item animatable-element" data-delay="0.3"><span class="list-item-bullet">•</span> SARS-CoV-2 exposure in Mozambican prison population 2021.</li>
+                <li class="list-item animatable-element" data-delay="0.4"><span class="list-item-bullet">•</span> Sars-Cov-2 Seroprevalence Among Blood Donors After The Second Covid-19 Wave In Mozambique 2021.</li>
+                <li class="list-item animatable-element" data-delay="0.5"><span class="list-item-bullet">•</span> Identification of the most frequent medical complications in children under five years of age with acute malnutrition admitted to 6 hospitals in the province of Tete.</li>
             </ul>
 
-            <h3 class="skill-category mt-6">KEY ACCOMPLISHMENTS</h3>
+            <h3 class="skill-category mt-6 animatable-element" data-delay="0.6">KEY ACCOMPLISHMENTS</h3>
             <ul class="list-none mt-2 text-slate-700">
-                <li class="list-item"><span class="list-item-bullet">•</span> Collaborated with National Institute of Health in Covid-19 – First Sero-epimiologic survey in Mozambique, helping in data management and data analysis of Sarvs – Cov-2 (Covid- 19) data in Cidade de Nampula and Pemba (Sero-epdemiologic survey for Sars-Cov-2).</li>
+                <li class="list-item animatable-element" data-delay="0.7"><span class="list-item-bullet">•</span> Collaborated with National Institute of Health in COVID-19 Sero-epidemiologic survey (Nampula & Pemba).</li>
             </ul>
         </section>
 
         <!-- Contact Section -->
         <section id="contact-content" class="tab-content section-card text-center">
-            <h2 class="section-title">📧 Get in Touch</h2>
-            <p class="text-lg text-slate-700 mb-6">I'm always open to discussing new projects, collaborations, or opportunities.</p>
-            <div class="flex flex-wrap justify-center items-center text-lg space-x-4 md:space-x-8">
+            <h2 class="section-title animatable-element">📧 Wanna chat? Let's connect! 👋</h2>
+            <p class="text-lg text-slate-700 mb-6 animatable-element" style="transition-delay: 0.1s;">Got a project in mind, a question about data, or just want to say hi? I'm always open to new connections and opportunities!</p>
+            <div class="flex flex-wrap justify-center items-center text-lg space-x-4 md:space-x-8 animatable-element" style="transition-delay: 0.2s;">
                 <span class="flex items-center text-slate-700"><span class="mr-2 text-blue-700">📍</span>Address Maputo, 1100</span>
                 <span class="flex items-center text-slate-700"><span class="mr-2 text-blue-700">📞</span>+258 847 875 963</span>
                 <span class="flex items-center text-slate-700"><span class="mr-2 text-blue-700">✉</span>hanzdomingos@gmail.com</span>
             </div>
-            <a href="mailto:hanzdomingos@gmail.com" class="inline-block mt-8 px-8 py-3 bg-blue-700 text-white font-bold rounded-full shadow-lg hover:bg-blue-800 transition duration-300">
+            <a href="mailto:hanzdomingos@gmail.com" class="inline-block mt-8 px-8 py-3 bg-blue-700 text-white font-bold rounded-full shadow-lg hover:bg-blue-800 transition duration-300 animatable-element" style="transition-delay: 0.3s;">
                 Send an Email
             </a>
         </section>
@@ -406,11 +457,54 @@
         document.addEventListener('DOMContentLoaded', () => {
             const tabLinks = document.querySelectorAll('.tab-link');
             const tabContents = document.querySelectorAll('.tab-content');
+            const animatedCounters = document.querySelectorAll('.animated-counter');
 
             // Function to hide all content and deactivate all links
             const hideAllTabs = () => {
-                tabContents.forEach(content => content.classList.remove('active'));
+                tabContents.forEach(content => {
+                    // Remove active and add inactive for exit animation
+                    content.classList.remove('active');
+                    content.classList.add('inactive');
+
+                    // Reset internal element animations
+                    content.querySelectorAll('.animatable-element').forEach(el => {
+                        el.classList.remove('animate-in');
+                        // Reset inline style delay if present
+                        if (el.style.transitionDelay) {
+                            el.style.transitionDelay = '';
+                        }
+                    });
+                });
                 tabLinks.forEach(link => link.classList.remove('active-tab'));
+            };
+
+            // Function to animate numbers
+            const animateCounter = (element, target) => {
+                let start = 0;
+                const duration = 1500; // milliseconds
+                const step = (timestamp) => {
+                    if (!start) start = timestamp;
+                    const progress = timestamp - start;
+                    const percentage = Math.min(progress / duration, 1);
+                    const value = Math.floor(percentage * target);
+                    element.textContent = value.toLocaleString(); // Format with commas
+                    if (progress < duration) {
+                        requestAnimationFrame(step);
+                    }
+                };
+                requestAnimationFrame(step);
+            };
+
+            // Function to animate elements within a section
+            const animateSectionElements = (sectionElement) => {
+                const elementsToAnimate = sectionElement.querySelectorAll('.animatable-element');
+                elementsToAnimate.forEach((el, index) => {
+                    // Use data-delay if available, otherwise calculate a staggered delay
+                    const delay = parseFloat(el.dataset.delay || (index * 0.1)) * 1000;
+                    setTimeout(() => {
+                        el.classList.add('animate-in');
+                    }, delay);
+                });
             };
 
             // Event listener for each tab link
@@ -421,16 +515,64 @@
                     const targetContent = document.getElementById(targetTabId);
 
                     if (targetContent) {
-                        hideAllTabs(); // Hide all
-                        targetContent.classList.add('active'); // Show target content
-                        link.classList.add('active-tab'); // Activate clicked link
+                        const currentActiveContent = document.querySelector('.tab-content.active');
 
-                        // Scroll to the top of the container when a tab is clicked
-                        document.querySelector('.container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        if (currentActiveContent) {
+                            // Animate out current content
+                            currentActiveContent.classList.remove('active');
+                            currentActiveContent.classList.add('inactive');
 
-                        // If the skills tab is active, ensure the chart is rendered/updated
-                        if (targetTabId === 'skills-content') {
-                            renderSoftwareProficiencyChart();
+                            // Wait for the exit animation to complete before showing the new tab
+                            currentActiveContent.addEventListener('transitionend', function handler() {
+                                currentActiveContent.removeEventListener('transitionend', handler);
+                                currentActiveContent.style.display = 'none'; // Hide after animation is done
+
+                                // Show the new tab content
+                                targetContent.classList.remove('inactive');
+                                targetContent.style.display = 'block';
+                                // Force reflow to ensure transition applies
+                                void targetContent.offsetWidth;
+                                targetContent.classList.add('active'); // Animate in
+
+                                link.classList.add('active-tab'); // Activate clicked link
+                                document.querySelector('.container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                                // Trigger internal element animations for the new active tab
+                                animateSectionElements(targetContent);
+
+                                // Special handling for charts and counters
+                                if (targetTabId === 'skills-content') {
+                                    renderSoftwareProficiencyChart();
+                                }
+                                if (targetTabId === 'about-content') {
+                                    animatedCounters.forEach(counter => {
+                                        const target = parseInt(counter.dataset.target.replace(/,/g, ''), 10);
+                                        animateCounter(counter, target);
+                                    });
+                                }
+                            });
+                        } else {
+                            // No active content, just show the new one immediately
+                            targetContent.classList.remove('inactive');
+                            targetContent.style.display = 'block';
+                            void targetContent.offsetWidth; // Trigger reflow
+                            targetContent.classList.add('active');
+                            link.classList.add('active-tab');
+
+                            document.querySelector('.container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                            // Trigger internal element animations for the new active tab
+                            animateSectionElements(targetContent);
+
+                            if (targetTabId === 'skills-content') {
+                                renderSoftwareProficiencyChart();
+                            }
+                            if (targetTabId === 'about-content') {
+                                animatedCounters.forEach(counter => {
+                                    const target = parseInt(counter.dataset.target.replace(/,/g, ''), 10);
+                                    animateCounter(counter, target);
+                                });
+                            }
                         }
                     }
                 });
@@ -547,9 +689,10 @@
                 }
             };
 
-            // Initial render of the chart if the skills tab is the default active one
-            if (document.getElementById('skills-content').classList.contains('active')) {
-                renderSoftwareProficiencyChart();
+            // Initial setup: activate the first tab and trigger its animations/charts
+            const initialTabLink = document.querySelector('.tab-link[data-tab="home-content"]');
+            if (initialTabLink) {
+                initialTabLink.click(); // Simulate a click on the home tab to trigger animations
             }
         });
     </script>
